@@ -72,7 +72,7 @@ function altitudeToLightColor(alt) {
   return daylightColor
 }
 
-let lastLightColor = 999//getCurrentLightColor()
+let lastLightColor = getCurrentLightColor()
 function checkSunChanged() {
   let currentLightColor = getCurrentLightColor()
   if (currentLightColor === lastLightColor){
