@@ -1,0 +1,12 @@
+{
+  "name": "norther-lights",
+  "description": "sun controlled lights",
+  "author": {
+    "name": "me"
+  },
+  "dependencies": {
+    "moment": "^2.22.2",
+    "moment-timezone": "^0.5.23",
+    "node-tradfri-client": "^1.4.1"
+  }
+}
