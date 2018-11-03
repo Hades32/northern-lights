@@ -8,10 +8,10 @@ const white_sunset = 50
 const white_daylight = 0
 
 async function doit() {
-  let client = new tradfri.TradfriClient("192.168.178.157")
-  //const {identity, psk} = await client.authenticate("sbhTrTeWvpUzfGdY")
-  const identity = "tradfri_1541172237270"
-  const psk = "CTtxvzsx0vqZekef"
+  let client = new tradfri.TradfriClient("192.168.178.157") //your gateway IP. should be static
+  //const {identity, psk} = await client.authenticate("key from back off device")
+  const identity = "identity"
+  const psk = "and psk that you get from authenticate"
   console.log(identity, psk)
   await client.connect(identity, psk)
   // observe devices
