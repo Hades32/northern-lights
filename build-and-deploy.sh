@@ -1,5 +1,5 @@
 #!/bin/bash -xe
-cd ..
+
 docker build -t northern-lights:local .
 docker kill northern-lights
 sleep 1
