@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: northern-lights
+  labels:
+    app: northern-lights
+    git: '%GIT_HASH%'
+spec:
+  selector:
+    matchLabels:
+      app: northern-lights
+  template:
+    metadata:
+      labels:
+        app: northern-lights
+        git: '%GIT_HASH%'
+    spec:
+      containers:
+      - name: northern-lights
+        image: northern-lights:local
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 300m
+            memory: 100Mi
