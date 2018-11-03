@@ -98,6 +98,6 @@ function checkSunChanged() {
   }
 }
 
-setInterval(checkSunChanged, 10*1000)
+setInterval(checkSunChanged, 60*1000)
 
 doit()
