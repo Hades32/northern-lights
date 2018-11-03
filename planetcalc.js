@@ -1,3 +1,4 @@
+// source: https://planetcalc.com/4270/
 exports.Planetcalc = new function () {
   var innerParent = this;
   this.Calculate318 = function (___inp___) {
