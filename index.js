@@ -7,10 +7,24 @@ const white_night = 100;
 const white_sunset = 50;
 const white_daylight = 0;
 
+const GW_DELAY = 1000
+
+let lastChangeTime = moment()
+
 //const {identity, psk} = await client.authenticate("key from back off device")
-const identity = process.env.GW_IDENTITY // "identity"
-const psk = process.env.GW_PSK // "and psk that you get from authenticate"
-const gwAddress = process.env.GW_ADDRESS //your gateway IP. should be static
+let config = {
+  identity: process.env.GW_IDENTITY, // "identity"
+  psk: process.env.GW_PSK, // "and psk that you get from authenticate"
+  gwAddress: process.env.GW_ADDRESS //your gateway IP. should be static
+}
+try {
+  var fs = require("fs");
+  let cfgJson = fs.readFileSync("/etc/northern-lights/config.json", "utf8");
+  config = JSON.parse(cfgJson);
+  console.log("using config from config file")
+} catch {
+  console.log("using config from environment")
+}
 
 async function doit() {
   let client = new tradfri.TradfriClient(gwAddress);
@@ -56,8 +70,14 @@ function handleChange(oldDevice, device) {
 }
 
 function handleSwitchedOn(device) {
+  let timeSinceLastCommand = lastChangeTime.diff(moment(), "milliseconds")
+  if (timeSinceLastCommand < GW_DELAY) {
+    setTimeout(()=>handleSwitchedOn(device), GW_DELAY-timeSinceLastCommand)
+    return
+  }
   let lightColor = getCurrentLightColor();
   device.lightList[0].setColorTemperature(lightColor);
+  lastChangeTime = moment()
 }
 
 function getCurrentLightColor() {
@@ -105,7 +125,7 @@ function checkSunChanged() {
     }
     console.log(`${light.name} will be handled`);
     setTimeout(() => handleSwitchedOn(light), timeout);
-    timeout += 1000;
+    timeout += GW_DELAY;
   }
 }
 
