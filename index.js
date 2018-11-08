@@ -142,7 +142,7 @@ function checkSunChanged() {
 }
 
 function log() {
-  console.log("[",new Date(), "] ", arguments)
+  console.log("[",new Date(), "] ", ...arguments)
 }
 
 setInterval(checkSunChanged, 60 * 1000);
