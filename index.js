@@ -63,9 +63,15 @@ function tradfri_deviceRemoved(instanceId) {
 }
 
 function handleChange(oldDevice, device) {
-  if (
-    oldDevice.lightList[0].onOff === false &&
-    device.lightList[0].onOff === true
+  if ( 
+    // is on and was
+    device.lightList[0].onOff === true &&
+    ( // turned on
+    oldDevice.lightList[0].onOff === false
+    || // or power switched on
+    oldDevice.alive === false &&
+    device.alive === true
+    ) 
   ) {
     handleSwitchedOn(device);
   }
