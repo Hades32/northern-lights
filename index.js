@@ -72,12 +72,16 @@ function handleChange(oldDevice, device) {
 }
 
 function handleSwitchedOn(device) {
-  let timeSinceLastCommand = lastChangeTime.diff(moment(), "milliseconds")
+  let lightColor = getCurrentLightColor();
+  if (device.lightList[0].colorTemperature === lightColor) {
+    return // nothing todo
+  }
+  let timeSinceLastCommand = moment().diff(lastChangeTime, "milliseconds")
   if (timeSinceLastCommand < GW_DELAY) {
     setTimeout(()=>handleSwitchedOn(device), GW_DELAY-timeSinceLastCommand)
     return
   }
-  let lightColor = getCurrentLightColor();
+  console.log(`switching ${device.name} to ${lightColor}`)
   device.lightList[0].setColorTemperature(lightColor);
   lastChangeTime = moment()
 }
@@ -95,14 +99,14 @@ function getCurrentLightColor() {
 }
 
 function altitudeToLightColor(alt) {
-  let daylightColor = white_daylight;
+  let lightColor = white_daylight;
   if (alt < 0) {
-    daylightColor = white_sunset;
+    lightColor = white_sunset;
   }
   if (alt < -5) {
-    daylightColor = white_night;
+    lightColor = white_night;
   }
-  return daylightColor;
+  return lightColor;
 }
 
 let lastLightColor = getCurrentLightColor();
