@@ -27,10 +27,12 @@ try {
 }
 
 async function doit() {
-  let client = new tradfri.TradfriClient(gwAddress);
+  let client = new tradfri.TradfriClient(config.gwAddress, {
+    watchConnection: true,
+  });
   await client.connect(
-    identity,
-    psk
+    config.identity,
+    config.psk
   );
   // observe devices
   await client
