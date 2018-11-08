@@ -21,9 +21,9 @@ try {
   var fs = require("fs");
   let cfgJson = fs.readFileSync("/etc/northern-lights/config.json", "utf8");
   config = JSON.parse(cfgJson);
-  console.log("using config from config file")
+  log("using config from config file")
 } catch {
-  console.log("using config from environment")
+  log("using config from environment")
 }
 
 async function doit() {
@@ -47,7 +47,7 @@ function tradfri_deviceUpdated(device) {
   if (device.type === tradfri.AccessoryTypes.lightbulb) {
     let oldDeviceState = lightbulbs[device.instanceId];
     lightbulbs[device.instanceId] = device;
-    console.log(
+    log(
       `${device.instanceId} - ${device.name} - ${
         device.deviceInfo.modelNumber
       } - on:${device.lightList[0].onOff} - ${device.lightList[0].dimmer}%`
@@ -87,7 +87,7 @@ function handleSwitchedOn(device) {
     setTimeout(()=>handleSwitchedOn(device), GW_DELAY-timeSinceLastCommand)
     return
   }
-  console.log(`switching ${device.name} to ${lightColor}`)
+  log(`switching ${device.name} to ${lightColor}`)
   device.lightList[0].setColorTemperature(lightColor);
   lastChangeTime = moment()
 }
@@ -122,7 +122,7 @@ function checkSunChanged() {
     return;
   }
   lastLightColor = currentLightColor;
-  console.log("the sun has changed!");
+  log("the sun has changed!");
   // if light color has changed, switch it for all
   // siwtched on lights
   let timeout = 0;
@@ -135,10 +135,14 @@ function checkSunChanged() {
     if (light.lightList[0].onOff === false) {
       continue;
     }
-    console.log(`${light.name} will be handled`);
+    log(`${light.name} will be handled`);
     setTimeout(() => handleSwitchedOn(light), timeout);
     timeout += GW_DELAY;
   }
+}
+
+function log() {
+  console.log("[",new Date(), "] ", arguments)
 }
 
 setInterval(checkSunChanged, 60 * 1000);
