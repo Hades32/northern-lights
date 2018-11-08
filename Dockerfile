@@ -6,4 +6,4 @@ ENV GW_PSK = "TODO"
 ENV GW_ADDRESS = "TODO"
 VOLUME /etc/northern-lights/
 COPY ./ /app
-RUN npm install
+RUN npm install -g yarn && yarn
