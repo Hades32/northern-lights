@@ -30,8 +30,8 @@ exports.Planetcalc = new function () {
           return num;
       }
 
-      var inputDate = new Date();
-      day = Date.UTC(day.getFullYear(), day.getMonth(), day.getDate(), day.getHours(), day.getMinutes()) - gmtdiff * 60 * 60 * 1000;
+      var inputDate = day;//new Date();
+      //day = Date.UTC(day.getFullYear(), day.getMonth(), day.getDate(), day.getHours(), day.getMinutes()) - gmtdiff * 60 * 60 * 1000;
 
       inputDate.setTime(day);
 
