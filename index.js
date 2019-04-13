@@ -9,8 +9,6 @@ const white_daylight = 0;
 
 const GW_DELAY = 1000
 
-let lastChangeTime = moment()
-
 //const {identity, psk} = await client.authenticate("key from back off device")
 let config = {
   identity: process.env.GW_IDENTITY, // "identity"
@@ -43,7 +41,7 @@ async function doit() {
 
 const lightbulbs = {};
 
-function tradfri_deviceUpdated(device) {
+async function tradfri_deviceUpdated(device) {
   if (device.type === tradfri.AccessoryTypes.lightbulb) {
     let oldDeviceState = lightbulbs[device.instanceId];
     lightbulbs[device.instanceId] = device;
@@ -53,7 +51,7 @@ function tradfri_deviceUpdated(device) {
       } - on:${device.lightList[0].onOff} - ${device.lightList[0].dimmer}%`
     );
     if (oldDeviceState) {
-      handleChange(oldDeviceState, device);
+      await handleChange(oldDeviceState, device);
     }
   }
 }
@@ -62,7 +60,7 @@ function tradfri_deviceRemoved(instanceId) {
   delete lightbulbs[instanceId];
 }
 
-function handleChange(oldDevice, device) {
+async function handleChange(oldDevice, device) {
   if ( 
     // is on and was
     device.lightList[0].onOff === true &&
@@ -73,23 +71,23 @@ function handleChange(oldDevice, device) {
     device.alive === true
     ) 
   ) {
-    handleSwitchedOn(device);
+    await handleSwitchedOn(device, true);
   }
 }
 
-function handleSwitchedOn(device) {
+function handleSwitchedOn(device, adaptDimmer) {
   let lightColor = getCurrentLightColor();
   if (device.lightList[0].colorTemperature === lightColor) {
     return // nothing todo
   }
-  let timeSinceLastCommand = moment().diff(lastChangeTime, "milliseconds")
-  if (timeSinceLastCommand < GW_DELAY) {
-    setTimeout(()=>handleSwitchedOn(device), GW_DELAY-timeSinceLastCommand)
-    return
-  }
   log(`switching ${device.name} to ${lightColor}`)
-  device.lightList[0].setColorTemperature(lightColor);
-  lastChangeTime = moment()
+  let newLightState = {
+    colorTemperature: lightColor,
+  }
+  if (adaptDimmer) {
+    newLightState.dimmer = 100;
+  }
+  return device.lightList[0].operateLight(newLightState, transitionTime);
 }
 
 function getCurrentLightColor() {
@@ -116,7 +114,7 @@ function altitudeToLightColor(alt) {
 }
 
 let lastLightColor = getCurrentLightColor();
-function checkSunChanged() {
+async function checkSunChanged() {
   let currentLightColor = getCurrentLightColor();
   if (currentLightColor === lastLightColor) {
     return;
@@ -136,7 +134,7 @@ function checkSunChanged() {
       continue;
     }
     log(`${light.name} will be handled`);
-    setTimeout(() => handleSwitchedOn(light), timeout);
+    await handleSwitchedOn(light);
     timeout += GW_DELAY;
   }
 }
