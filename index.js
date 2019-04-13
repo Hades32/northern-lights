@@ -87,7 +87,7 @@ function handleSwitchedOn(device, adaptDimmer) {
   if (adaptDimmer) {
     newLightState.dimmer = 100;
   }
-  return device.lightList[0].operateLight(newLightState, transitionTime);
+  return device.lightList[0].operateLight(newLightState);
 }
 
 function getCurrentLightColor() {
