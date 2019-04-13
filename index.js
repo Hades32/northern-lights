@@ -77,17 +77,15 @@ async function handleChange(oldDevice, device) {
 
 function handleSwitchedOn(device, adaptDimmer) {
   let lightColor = getCurrentLightColor();
-  if (device.lightList[0].colorTemperature === lightColor) {
-    return // nothing todo
+  log(`switching ${device.name} to ${lightColor} and 100%`);
+  let promises = [];
+  if (device.lightList[0].colorTemperature !== lightColor) {
+    promises.push(device.lightList[0].setColorTemperature(lightColor));
   }
-  log(`switching ${device.name} to ${lightColor}`)
-  let newLightState = {
-    colorTemperature: lightColor,
+  if (adaptDimmer && device.lightList[0].dimmer != 100) {
+    promises.push(tempPromise, device.lightList[0].setBrightness(100));
   }
-  if (adaptDimmer) {
-    newLightState.dimmer = 100;
-  }
-  return device.lightList[0].operateLight(newLightState);
+  return Promise.all(promises);
 }
 
 function getCurrentLightColor() {
