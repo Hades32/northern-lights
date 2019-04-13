@@ -83,7 +83,7 @@ async function handleSwitchedOn(device, adaptDimmer) {
   }
   if (adaptDimmer && device.lightList[0].dimmer != 100) {
     if (lightColorNeedsChange)
-      await delay(150);
+      await delay(1000);
     await device.lightList[0].setBrightness(100);
     log(`switched ${device.name} to 100%`);
   }
