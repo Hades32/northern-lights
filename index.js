@@ -83,7 +83,7 @@ function handleSwitchedOn(device, adaptDimmer) {
     promises.push(device.lightList[0].setColorTemperature(lightColor));
   }
   if (adaptDimmer && device.lightList[0].dimmer != 100) {
-    promises.push(tempPromise, device.lightList[0].setBrightness(100));
+    promises.push(device.lightList[0].setBrightness(100));
   }
   return Promise.all(promises);
 }
