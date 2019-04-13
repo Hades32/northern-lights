@@ -61,15 +61,14 @@ function tradfri_deviceRemoved(instanceId) {
 }
 
 async function handleChange(oldDevice, device) {
-  if ( 
+  if (
     // is on and was
     device.lightList[0].onOff === true &&
     ( // turned on
-    oldDevice.lightList[0].onOff === false
-    || // or power switched on
-    oldDevice.alive === false &&
-    device.alive === true
-    ) 
+      oldDevice.lightList[0].onOff === false || // or power switched on
+      oldDevice.alive === false &&
+      device.alive === true
+    )
   ) {
     await handleSwitchedOn(device, true);
   }
@@ -77,11 +76,14 @@ async function handleChange(oldDevice, device) {
 
 async function handleSwitchedOn(device, adaptDimmer) {
   let lightColor = getCurrentLightColor();
-  if (device.lightList[0].colorTemperature !== lightColor) {
+  let lightColorNeedsChange = device.lightList[0].colorTemperature !== lightColor
+  if (lightColorNeedsChange) {
     await device.lightList[0].setColorTemperature(lightColor);
     log(`switched ${device.name} to ${lightColor}`);
   }
   if (adaptDimmer && device.lightList[0].dimmer != 100) {
+    if (lightColorNeedsChange)
+      await delay(150);
     await device.lightList[0].setBrightness(100);
     log(`switched ${device.name} to 100%`);
   }
@@ -138,7 +140,13 @@ async function checkSunChanged() {
 }
 
 function log() {
-  console.log("[",new Date(), "] ", ...arguments)
+  console.log("[", new Date(), "] ", ...arguments)
+}
+
+function delay(delayMs) {
+  return new Promise(function (resolve, reject) {
+    setTimeout(resolve, delayMs);
+  })
 }
 
 setInterval(checkSunChanged, 60 * 1000);
